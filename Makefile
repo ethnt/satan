@@ -3,3 +3,9 @@ build:
 
 deploy:
 	morph deploy network.nix switch
+
+lint:
+	nixfmt --check **/*.nix
+
+format:
+	nixfmt **/*.nix

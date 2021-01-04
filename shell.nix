@@ -5,7 +5,7 @@ let
 in pkgs.mkShell rec {
   name = "satan";
 
-  buildInputs = with pkgs; [ niv morph ];
+  buildInputs = with pkgs; [ niv nixfmt morph ];
 
   # shellHook = ''
   #   export NIXOPS_STATE=./opt/deployments.nixops

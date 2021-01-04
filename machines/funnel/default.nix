@@ -1,5 +1,8 @@
 { config, pkgs, modulesPath, lib, ... }: {
-  imports = [ (modulesPath + "/virtualisation/digital-ocean-config.nix") ];
+  imports = [
+    (modulesPath + "/virtualisation/digital-ocean-config.nix")
+    ../common.nix
+  ];
 
   deployment = {
     targetUser = "root";
@@ -10,12 +13,5 @@
 
   nixpkgs.localSystem.system = "x86_64-linux";
 
-  nix.gc = {
-    automatic = true;
-    dates = "03:15";
-  };
-
-  environment.systemPackages = with pkgs; [ bat openvpn ];
-
-  programs.mosh.enable = true;
+  environment.systemPackages = with pkgs; [ openvpn ];
 }
