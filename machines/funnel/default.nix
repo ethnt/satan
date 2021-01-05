@@ -2,6 +2,8 @@
   imports = [
     (modulesPath + "/virtualisation/digital-ocean-config.nix")
     ../common.nix
+    ../../modules/unbound
+    ../../modules/pihole
   ];
 
   deployment = {
@@ -13,5 +15,5 @@
 
   nixpkgs.localSystem.system = "x86_64-linux";
 
-  environment.systemPackages = with pkgs; [ openvpn ];
+  environment.systemPackages = with pkgs; [ dnsutils ];
 }
