@@ -2,8 +2,8 @@
   imports = [
     (modulesPath + "/virtualisation/digital-ocean-config.nix")
     ../common.nix
-    ../../modules/unbound
-    ../../modules/pihole
+    ./modules/unbound
+    ./modules/pihole
   ];
 
   deployment = {

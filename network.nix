@@ -11,5 +11,5 @@ in {
     description = "satan";
   };
 
-  funnel = import ./machines/funnel;
+  funnel = import ./machines/funnel/configuration.nix;
 }

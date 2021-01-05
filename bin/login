@@ -4,6 +4,10 @@ case $1 in
   funnel)
     ssh -i $SSH_IDENTITY_FILE root@64.225.14.103
     ;;
+  
+  controller)
+    ssh -i $SSH_IDENTITY_FILE root@192.168.1.57
+    ;;
 
   *)
     echo -n "Machine name not recognized"
