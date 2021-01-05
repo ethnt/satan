@@ -1,0 +1,11 @@
+#!/bin/bash
+
+case $1 in
+  funnel)
+    ssh -i $SSH_IDENTITY_FILE root@64.225.14.103
+    ;;
+  
+  *)
+    echo -n "Machine name not recognized"
+    ;;
+esac
