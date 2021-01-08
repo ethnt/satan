@@ -2,18 +2,18 @@
   imports = [
     (modulesPath + "/virtualisation/digital-ocean-config.nix")
     ../common.nix
-    ./modules/unbound
     ./modules/pihole
+    # ./modules/wireguard
   ];
 
   deployment = {
     targetUser = "root";
-    targetHost = "64.225.14.103";
+    targetHost = "funnel.satan.computer";
   };
 
   networking.hostName = "funnel";
 
-  nixpkgs.localSystem.system = "x86_64-linux";
+  # nixpkgs.localSystem.system = "x86_64-linux";
 
   environment.systemPackages = with pkgs; [ dnsutils ];
 }

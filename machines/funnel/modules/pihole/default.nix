@@ -3,7 +3,8 @@
 
   virtualisation.oci-containers.containers.pihole = {
     image = "pihole/pihole:latest";
-    ports = [ "53:53/tcp" "53:53/udp" "67:67/udp" "80:80/tcp" "443:443/tcp" ];
+    ports =
+      [ "53:53/tcp" "53:53/udp" "67:67/udp" "8000:80/tcp" "4433:443/tcp" ];
     environment = { TZ = "America/New_York"; };
     volumes = [ "/etc/pihole/:/etc/pihole/" "/etc/dnsmasq.d/:/etc/dnsmasq.d/" ];
     extraOptions = [ "--cap-add=NET_ADMIN" ];
@@ -25,9 +26,31 @@
 
     http = [{
       scheme = "http";
-      port = 80;
+      port = 8000;
       path = "/admin";
       description = "Check if Pi-hole admin is accessible";
     }];
+  };
+
+  networking.firewall = {
+    allowedTCPPorts = [ 53 80 8000 4433 ];
+    allowedUDPPorts = [ 53 67 ];
+  };
+
+  security.acme.acceptTerms = true;
+  security.acme.email = "ethan.turkeltaub@hey.com";
+
+  services.nginx = {
+    enable = true;
+
+    virtualHosts."pihole.satan.computer" = {
+      addSSL = true;
+      enableACME = true;
+
+      root = "/var/www/pihole";
+
+      locations."/" = { proxyPass = "http://localhost:8000"; };
+    };
+
   };
 }
