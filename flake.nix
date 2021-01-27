@@ -1,0 +1,15 @@
+{
+  description = "Satan";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable-small";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = inputs@{ nixpkgs, flake-utils, self, ... }:
+    {
+
+    } // (flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = nixpkgs.legacyPackages.${system};
+      in { devShell = import ./shell.nix { inherit pkgs; }; }));
+}
