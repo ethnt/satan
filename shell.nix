@@ -3,6 +3,6 @@
 with pkgs;
 
 mkShell {
-  name = "tilde";
+  name = "satan";
   buildInputs = [ nixfmt git-crypt ];
 }
