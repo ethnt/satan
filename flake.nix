@@ -2,7 +2,8 @@
   description = "Satan";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-20.09-small";
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs.url = "github:serokell/deploy-rs";
   };
@@ -66,6 +67,11 @@
         controller = mkConfig {
           platform = "aarch64-linux";
           machine = "controller";
+        };
+
+        barbossa = mkConfig {
+          platform = "x86_64-linux";
+          machine = "barbossa";
         };
       };
 

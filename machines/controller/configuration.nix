@@ -1,10 +1,11 @@
 { config, pkgs, lib, ... }: {
-  imports = [ ./hardware-configuration.nix ./modules/unifi ];
+  imports = [ ./hardware-configuration.nix ];
 
-  # deployment = {
-  #   targetUser = "root";
-  #   targetHost = "192.168.1.57";
-  # };
+  satan = {
+    services = {
+      unifi.enable = true;
+    };
+  };
 
   networking.hostName = "controller";
 }

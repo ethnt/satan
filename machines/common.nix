@@ -1,5 +1,5 @@
 { lib, pkgs, ... }: {
-  imports = [ ../programs/index.nix ../services/index.nix ];
+  imports = [ ../modules/programs/index.nix ../modules/services/index.nix ];
 
   nix.gc = {
     automatic = true;
@@ -8,24 +8,14 @@
 
   time.timeZone = "America/New_York";
 
-  networking.firewall = {
-    enable = true;
-  };
-
-  services.zerotierone = {
-    enable = true;
-    joinNetworks = [ "e4da7455b2239e18" ];
-  };
-
-  # programs.mosh.enable = true;
+  networking.firewall = { enable = true; };
 
   satan = {
-    programs = {
-      mosh.enable = true;
-    };
+    programs = { mosh.enable = true; };
 
     services = {
       openssh.enable = true;
+      tailscale.enable = true;
     };
   };
 
