@@ -4,5 +4,5 @@ with pkgs;
 
 mkShell {
   name = "satan";
-  buildInputs = [ nixfmt git-crypt ];
+  buildInputs = [ git-crypt nixfmt ];
 }

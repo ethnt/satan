@@ -2,13 +2,13 @@
   description = "Satan";
 
   inputs = {
-    # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-20.09-small";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs.url = "github:serokell/deploy-rs";
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, deploy-rs }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, deploy-rs }:
     let
       inherit (nixpkgs) lib;
 
@@ -64,10 +64,10 @@
           machine = "funnel";
         };
 
-        controller = mkConfig {
-          platform = "aarch64-linux";
-          machine = "controller";
-        };
+        # controller = mkConfig {
+        #   platform = "aarch64-linux";
+        #   machine = "controller";
+        # };
 
         barbossa = mkConfig {
           platform = "x86_64-linux";
@@ -82,16 +82,22 @@
           machine = "funnel";
         };
 
-        controller = mkNode {
-          platform = "aarch64-linux";
-          hostname = "192.168.1.57";
-          machine = "controller";
+        # controller = mkNode {
+        #   platform = "aarch64-linux";
+        #   hostname = "192.168.1.57";
+        #   machine = "controller";
+        # };
+
+        barbossa = mkNode {
+          platform = "x86_64-linux";
+          hostname = "barbossa";
+          machine = "barbossa";
         };
       };
 
       checks = builtins.mapAttrs
         (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     } // (flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
+      let pkgs = nixpkgs-unstable.legacyPackages.${system};
       in { devShell = import ./shell.nix { inherit pkgs; }; }));
 }

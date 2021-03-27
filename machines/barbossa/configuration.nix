@@ -73,6 +73,22 @@
       };
     };
 
+    telegraf = {
+      enable = true;
+      extraConfig = ((builtins.readFile ./etc/inputs.toml)
+        + (builtins.readFile ./etc/telegraf/outputs.toml));
+    };
+
+    influxdb = { enable = true; };
+
+    grafana = {
+      enable = true;
+      nginx = {
+        enable = true;
+        host = "grafana.barbossa.dev";
+      };
+    };
+
     builder = {
       enable = true;
       systems = [ "aarch64-linux" ];

@@ -3,7 +3,7 @@
 
   satan = {
     services = {
-      unifi.enable = true;
+      unifi.enable = false;
     };
   };
 

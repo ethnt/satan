@@ -5,7 +5,7 @@
 
 {
   # FIXME: This is impure (see https://discourse.nixos.org/t/whats-the-rationale-behind-not-detected-nix/5403/6)
-  imports = [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix> ];
+  # imports = [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix> ];
 
   boot.initrd.availableKernelModules = [
     "xhci_pci"
