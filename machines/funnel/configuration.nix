@@ -5,5 +5,13 @@
 
   environment.systemPackages = with pkgs; [ dnsutils ];
 
-  # satan = { services = { pihole.enable = true; }; };
+  satan = {
+    services = {
+      telegraf = {
+        enable = true;
+        extraConfig = (builtins.readFile ./etc/telegraf/inputs.toml)
+          + (builtins.readFile ./etc/telegraf/outputs.toml);
+      };
+    };
+  };
 }

@@ -5,14 +5,22 @@
     ./nginx
     ./nzbget
     ./openssh
-    ./pihole
     ./influxdb
     ./plex
     ./radarr
     ./sonarr
     ./tailscale
     ./telegraf
-    ./unifi
+    ./sabre
     ./zerotier
+    ./graylog
+    ./rsyslogd
+    ./overseerr
+    ./podman
+    ./fail2ban
+    ./wireguard
+    ./jackett
+    ./transmission
+    ./deluge
   ];
 }

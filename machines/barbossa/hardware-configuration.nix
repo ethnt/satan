@@ -8,6 +8,7 @@
   # imports = [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix> ];
 
   boot.initrd.availableKernelModules = [
+    "e1000e"
     "xhci_pci"
     "ahci"
     "usb_storage"
@@ -19,7 +20,7 @@
     "cryptd"
   ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [ "kvm-intel" "xt_nat" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
@@ -35,9 +36,8 @@
   swapDevices =
     [{ device = "/dev/disk/by-uuid/fedbfd7f-4b43-4644-b6db-33fe94fb232d"; }];
 
-  nix.maxJobs = lib.mkDefault 8;
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
-  # High-DPI console
+
   console.font =
     lib.mkDefault "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
 }

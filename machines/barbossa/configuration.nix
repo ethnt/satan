@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
+  sops.defaultSopsFile = ../../secrets.yaml;
+
+  sops.secrets.services_sabre_username = { };
+  sops.secrets.services_sabre_password = { };
+
   # Use the systemd-boot EFI boot loader.
   boot = {
     loader = {
@@ -8,13 +13,17 @@
       efi.canTouchEfiVariables = true;
     };
 
-    initrd.luks.devices = {
-      root = {
-        device = "/dev/sda2";
-        preLVM = true;
+    initrd.luks = {
+      devices = {
+        root = {
+          device = "/dev/sda2";
+          preLVM = true;
+        };
       };
     };
   };
+
+  nix.maxJobs = lib.mkDefault 8;
 
   networking = {
     hostName = "barbossa";
@@ -22,8 +31,6 @@
 
     interfaces.eno1.useDHCP = true;
     interfaces.wlp0s20f3.useDHCP = true;
-
-    firewall = { enable = true; };
   };
 
   fileSystems."/mnt/omnibus" = {
@@ -35,10 +42,30 @@
     ]; # Don't mount until it's first accessed
   };
 
+  users.users.ethan = {
+    createHome = true;
+    extraGroups = [ "wheel" ];
+    group = "users";
+  };
+
   satan.services = {
     nginx = {
       enable = true;
       contactEmail = "ethan.turkeltaub@hey.com";
+      virtualHosts = {
+        "e10.land" = {
+          addSSL = true;
+          enableACME = true;
+
+          locations."/" = {
+            root = "/var/www/e10.land";
+            extraConfig = ''
+              autoindex on;
+              fancyindex on;
+            '';
+          };
+        };
+      };
     };
 
     plex = {
@@ -73,13 +100,22 @@
       };
     };
 
-    telegraf = {
+    sabre = {
       enable = true;
-      extraConfig = ((builtins.readFile ./etc/inputs.toml)
-        + (builtins.readFile ./etc/telegraf/outputs.toml));
+      path = "/mnt/omnibus/data/sync";
+      nginx = {
+        enable = true;
+        host = "sync.barbossa.dev";
+      };
     };
 
-    influxdb = { enable = true; };
+    graylog = {
+      enable = true;
+      nginx = {
+        enable = true;
+        host = "graylog.barbossa.dev";
+      };
+    };
 
     grafana = {
       enable = true;
@@ -89,9 +125,52 @@
       };
     };
 
+    influxdb = { enable = true; };
+
+    telegraf = {
+      enable = true;
+      extraConfig = (builtins.readFile ./etc/telegraf/inputs.toml)
+        + (builtins.readFile ./etc/telegraf/outputs.toml);
+    };
+
+    overseerr = {
+      enable = true;
+      nginx.enable = true;
+      nginx.host = "overseerr.barbossa.dev";
+    };
+
+    podman = { enable = true; };
+
     builder = {
       enable = true;
       systems = [ "aarch64-linux" ];
+    };
+
+    fail2ban = { enable = true; };
+
+    jackett = {
+      enable = true;
+      nginx.enable = true;
+      nginx.host = "jackett.barbossa.dev";
+    };
+
+    transmission = {
+      enable = true;
+      nginx = {
+        enable = true;
+        host = "transmission.barbossa.dev";
+      };
+    };
+
+    wireguard = {
+      enable = true;
+      address = {
+        ipv4 = "10.72.166.76/32";
+        ipv6 = "fc00:bbbb:bbbb:bb01::9:a64b/128";
+      };
+      peer = "+/HYwELAaww6XTtPmvf3Hr8NqLIr69YNUpAMBvWJiGw=";
+      endpoint = "86.106.143.15:3214";
+      privateKey = "w4J3Pdi1ZJdBfJH6g/506G3a1FekkjZyDlICL72iBqU=";
     };
   };
 

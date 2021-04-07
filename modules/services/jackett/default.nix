@@ -2,27 +2,26 @@
 
 with lib;
 
-let cfg = config.satan.services.sonarr;
+let cfg = config.satan.services.jackett;
 in {
-  options.satan.services.sonarr = {
-    enable = mkEnableOption "Enable Sonarr";
+  options.satan.services.jackett = {
+    enable = mkEnableOption "Enable Radarr";
 
     nginx.enable = mkEnableOption "Enable Nginx";
     nginx.host = mkOption { type = types.str; };
   };
 
   config = mkIf cfg.enable {
-    virtualisation.oci-containers.containers.sonarr = {
-      image = "ghcr.io/linuxserver/sonarr";
+    virtualisation.oci-containers.containers.jackett = {
+      image = "ghcr.io/linuxserver/jackett";
       environment = {
         LOG_LEVEL = "info";
         TZ = "America/New_York";
       };
-      ports = [ "8989:8989" ];
+      ports = [ "9117:9117" ];
       volumes = [
-        "/var/lib/sonarr/.config/NzbDrone:/config"
-        "/mnt/omnibus/media/tv:/tv"
-        "/mnt/omnibus/nzbget/downloads/TV\ Shows:/downloads"
+        "/var/lib/jackett:/config"
+        "/mnt/omnibus/jackett:/downloads"
       ];
     };
 
@@ -33,7 +32,7 @@ in {
         addSSL = true;
         enableACME = true;
 
-        locations."/" = { proxyPass = "http://localhost:8989"; };
+        locations."/" = { proxyPass = "http://localhost:9117"; };
       };
     };
   };

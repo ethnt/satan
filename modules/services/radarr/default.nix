@@ -12,9 +12,18 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.radarr = {
-      enable = true;
-      openFirewall = true;
+    virtualisation.oci-containers.containers.radarr = {
+      image = "ghcr.io/linuxserver/radarr";
+      environment = {
+        LOG_LEVEL = "info";
+        TZ = "America/New_York";
+      };
+      ports = [ "7878:7878" ];
+      volumes = [
+        "/var/lib/radarr/.config/Radarr:/config"
+        "/mnt/omnibus/media/movies:/movies"
+        "/mnt/omnibus/nzbget/downloads/Movies:/downloads"
+      ];
     };
 
     services.nginx = mkIf cfg.nginx.enable {

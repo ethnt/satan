@@ -2,4 +2,4 @@
 
 [[outputs.influxdb]]
 database = "telegraf"
-urls = ["http://localhost:8086"]
+urls = ["http://10.241.9.173:8086"]

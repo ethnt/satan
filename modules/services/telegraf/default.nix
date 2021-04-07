@@ -21,6 +21,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+    users.users.${cfg.user} = {
+      createHome = false;
+      extraGroups = [ "wheel" ];
+      group = "users";
+    };
+
     # Open ports for SNMP
     networking.firewall = {
       allowedTCPPorts = [ 161 162 ];

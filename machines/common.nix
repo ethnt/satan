@@ -11,12 +11,18 @@
   networking.firewall = { enable = true; };
 
   satan = {
-    programs = { mosh.enable = true; };
+    programs = {
+      fish.enable = true;
+      mosh.enable = true;
+    };
 
     services = {
       openssh.enable = true;
-      tailscale.enable = true;
       zerotier.enable = true;
+      rsyslogd = {
+        enable = true;
+        syslogServer = "10.241.9.173:5144";
+      };
     };
   };
 

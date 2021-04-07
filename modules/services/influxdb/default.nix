@@ -6,11 +6,6 @@ let cfg = config.satan.services.influxdb;
 in {
   options.satan.services.influxdb = {
     enable = mkEnableOption "Enable InfluxDB";
-
-    user = mkOption {
-      type = types.str;
-      default = "influxdb";
-    };
   };
 
   config = mkIf cfg.enable {
@@ -21,7 +16,7 @@ in {
 
     services.influxdb = {
       enable = true;
-      user = cfg.user;
+      user = "influxdb";
     };
   };
 }

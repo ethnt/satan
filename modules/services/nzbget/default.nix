@@ -21,7 +21,10 @@ in {
         addSSL = true;
         enableACME = true;
 
-        locations."/" = { proxyPass = "http://localhost:6789"; };
+        locations."/" = {
+          proxyPass = "http://localhost:6789";
+          proxyWebsockets = true;
+        };
       };
     };
   };

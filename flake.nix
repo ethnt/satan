@@ -6,9 +6,10 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs.url = "github:serokell/deploy-rs";
+    sops-nix.url = github:Mic92/sops-nix;
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, deploy-rs }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, deploy-rs, sops-nix }:
     let
       inherit (nixpkgs) lib;
 
@@ -36,7 +37,7 @@
         let
           # This is an attribute set common between all machines (basically a top-level NixOS configuration)
           defaults = { pkgs, lib, ... }: {
-            imports = [ ./machines/common.nix machineConfiguration ]
+            imports = [ ./machines/common.nix machineConfiguration sops-nix.nixosModules.sops ]
               ++ extraModules;
           };
           # This gets boiled down to a nixosSystem
@@ -47,6 +48,11 @@
           modules = [ defaults ];
         };
 
+      # A function to create a new deploy-rs node for each host. Arguments are:
+      #   - hostname: IP or domain to deploy to
+      #   - machine: The NixOS configuration for the machine
+      #   - platform: What platform the host is (x86_64-linux or aarch64-linux, usually)
+      #
       # TODO: Combine this and mkConfig into one function?
       mkNode = { hostname, machine, platform }: {
         hostname = hostname;
@@ -90,7 +96,7 @@
 
         barbossa = mkNode {
           platform = "x86_64-linux";
-          hostname = "barbossa";
+          hostname = "barbossa.dev";
           machine = "barbossa";
         };
       };

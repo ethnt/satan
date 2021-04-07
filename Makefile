@@ -7,5 +7,8 @@ build-controller:
 build-barbossa:
 	nix build .#nixosConfigurations.barbossa.config.system.build.toplevel --impure
 
+ssh-barbossa:
+	ssh -i keys/satan root@barbossa
+
 deploy:
 	nix develop -c "nix" "run" "github:serokell/deploy-rs" "--impure"
