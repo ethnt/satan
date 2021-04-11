@@ -23,6 +23,7 @@ in {
         "/var/lib/sonarr/.config/NzbDrone:/config"
         "/mnt/omnibus/media/tv:/tv"
         "/mnt/omnibus/nzbget/downloads/TV\ Shows:/downloads"
+        "/mnt/omnibus/transmission/downloads:/transmission-downloads"
       ];
     };
 

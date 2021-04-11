@@ -1,9 +1,17 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   imports = [ ../modules/programs/index.nix ../modules/services/index.nix ];
 
-  nix.gc = {
-    automatic = true;
-    dates = "03:15";
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "03:15";
+    };
+
+    extraOptions = ''
+      plugin-files = ${
+        pkgs.nix-plugins.override { nix = config.nix.package; }
+      }/lib/nix/plugins/libnix-extra-builtins.so
+    '';
   };
 
   time.timeZone = "America/New_York";

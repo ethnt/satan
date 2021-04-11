@@ -9,33 +9,41 @@ in {
   options.satan.services.transmission = {
     enable = mkEnableOption "Enable Transmission";
 
+    authentication.username = mkOption {};
+    authentication.password = mkOption {};
+
     nginx.enable = mkEnableOption "Enable Nginx";
     nginx.host = mkOption { type = types.str; };
   };
 
   config = mkIf cfg.enable {
+    networking.firewall.allowedTCPPorts = [ 51413 ];
+    networking.firewall.allowedUDPPorts = [ 51413 ];
+
     virtualisation.oci-containers.containers.transmission = {
-      image = "ghcr.io/linuxserver/transmission";
+      autoStart = true;
+      image = "linuxserver/transmission:version-3.00-r2";
+
       environment = {
-        TZ = "America/New_York";
-        USER = "ethan";
-        PASS = "13201";
+        "PUID" = "1001";
+        "PGID" = "1001";
+        "TZ" = "America/New_York";
+        "USERNAME" = cfg.authentication.username;
+        "PASSWORD" = cfg.authentication.password;
       };
-      ports = [ "9091:9091" "51413:51413" "51413:51413/udp" ];
+
+      dependsOn = [ "wireguard" ];
+      ports = [ "9091/9091" ];
+
+      extraOptions = [ "--net=container:wireguard" ];
       volumes = [
         "/var/lib/transmission:/config"
         "/mnt/omnibus/transmission/downloads:/downloads"
+        "/mnt/omnibus/transmission/incomplete:/incomplete"
         "/mnt/omnibus/transmission/watch:/watch"
         "${etc."transmission/settings.json".source}:/config/settings.json:ro"
       ];
     };
-
-    # systemd.services."transmission" = {
-    #   bindsTo = [ "wg.service" ];
-    #   after = [ "wg.service" ];
-    #   unitConfig.JoinsNamespaceOf = "netns@wg.service";
-    #   serviceConfig.PrivateNetwork = true;
-    # };
 
     services.nginx = mkIf cfg.nginx.enable {
       virtualHosts."${cfg.nginx.host}" = {

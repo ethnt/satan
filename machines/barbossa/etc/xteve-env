@@ -1,0 +1,46 @@
+##### Config
+
+### Set as same user on your machine, run id -u & id -g to get your user / group id
+PUID=1000
+PGID=1000
+
+### Xteve Config
+XTEVE_PORT=34400
+use_xTeveAPI=yes
+
+### Lazystream Config
+use_lazystream=yes
+include_nhl=yes
+include_mlb=yes
+cdn=akc
+#quality=720p60
+
+### Guide2go Config
+use_guide2go=no
+
+## List of created lineup yaml files in /guide2go
+# Exmaple with 3 lineups
+# YamlList="CBLguide.yaml SATguide.yaml SATSport.yaml"
+
+## to create your lineups run the below command and follow the on-screen instructions
+# docker exec -it <yourdockername> guide2go -configure /guide2go/<lineupnamehere>.yaml
+
+### Emby
+# Only necessary if xTeVe API is active
+# API Key, https://github.com/MediaBrowser/Emby/wiki/Api-Key-Authentication
+# embyID, settings, scroll down click API, Scheduled Task Service, GET /ScheduledTasks, Try, Execute, look for "Refresh Guide" ID, sample here 9492d30c70f7f1bec3757c9d0a4feb45
+use_embyAPI=yes
+embyIP=127.0.0.1
+embyPORT=8096
+embyApiKey=b2fedf2c5505470b8f041435bea150ac
+embyID=eturkeltaub
+
+### Plex
+# Only necessary if xTeVe API is active
+# To find your Plex Update URL navigate to your plex server in chrome (eg, 192.168.1.1:32400/web/),
+# and open chrome developer tools (press F12). Once developer tools is open find and click the "Refresh
+# Guide" link in Plex and then look at the developer tools window. The first request listed should start
+# with "reloadGuide?". Right click the line and go to copy -> Copy link address. Paste the result below as
+# plexUpdateURL.
+use_plexAPI=yes
+plexUpdateURL=https://192-168-1-45.994461ae4bc64769a30e12a018c4e673.plex.direct:32400/livetv/dvrs/2/reloadGuide?X-Plex-Product=Plex Web&X-Plex-Version=4.34.4&X-Plex-Client-Identifier=oa5mdhzo5tfqc6jamyyx4ssl&X-Plex-Platform=Firefox&X-Plex-Platform-Version=86.0&X-Plex-Sync-Version=2&X-Plex-Features=external-media,indirect-media&X-Plex-Model=bundled&X-Plex-Device=OSX&X-Plex-Device-Name=Firefox&X-Plex-Device-Screen-Resolution=1792x909,1792x1120&X-Plex-Token=uYy6CPxKiDPeVrBDZkbQ&X-Plex-Language=en

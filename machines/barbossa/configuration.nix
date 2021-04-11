@@ -3,8 +3,11 @@
 
   sops.defaultSopsFile = ../../secrets.yaml;
 
-  sops.secrets.services_sabre_username = { };
-  sops.secrets.services_sabre_password = { };
+  # sops.secrets.services_sabre_username = { };
+  # sops.secrets.services_sabre_password = { };
+
+  # sops.secrets.services_transmission_username = { };
+  # sops.secrets.services_transmission_password = { };
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -162,15 +165,14 @@
       };
     };
 
-    wireguard = {
+    wireguard = { enable = true; };
+
+    xteve = {
       enable = true;
-      address = {
-        ipv4 = "10.72.166.76/32";
-        ipv6 = "fc00:bbbb:bbbb:bb01::9:a64b/128";
+      nginx = {
+        enable = false;
+        host = "xteve.barbossa.dev";
       };
-      peer = "+/HYwELAaww6XTtPmvf3Hr8NqLIr69YNUpAMBvWJiGw=";
-      endpoint = "86.106.143.15:3214";
-      privateKey = "w4J3Pdi1ZJdBfJH6g/506G3a1FekkjZyDlICL72iBqU=";
     };
   };
 

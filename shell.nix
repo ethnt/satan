@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs, sops-nix, ... }:
 
 with pkgs;
 
@@ -6,12 +6,12 @@ mkShell {
   sopsPGPKeyDirs = [ "./keys/users" "./keys/hosts" ];
 
   name = "satan";
-  buildInputs = [
+  nativeBuildInputs = with pkgs; [
     git-crypt
     gnupg
     nixfmt
     sops
     ssh-to-pgp
-    # (pkgs.callPackage <sops-nix> { }).sops-pgp-hook
+    (pkgs.callPackage sops-nix { }).sops-pgp-hook
   ];
 }

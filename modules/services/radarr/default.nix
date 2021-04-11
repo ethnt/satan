@@ -19,10 +19,12 @@ in {
         TZ = "America/New_York";
       };
       ports = [ "7878:7878" ];
+      extraOptions = [ "--network=htpc" ];
       volumes = [
         "/var/lib/radarr/.config/Radarr:/config"
         "/mnt/omnibus/media/movies:/movies"
         "/mnt/omnibus/nzbget/downloads/Movies:/downloads"
+        "/mnt/omnibus/transmission/downloads:/transmission-downloads"
       ];
     };
 

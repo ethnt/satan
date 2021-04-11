@@ -1,1 +1,2 @@
 keys/satan filter=git-crypt diff=git-crypt
+keys/**/*.asc filter=git-crypt diff=git-crypt

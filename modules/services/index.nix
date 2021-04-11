@@ -1,26 +1,27 @@
 {
   imports = [
     ./builder
+    ./deluge
+    ./fail2ban
     ./grafana
+    ./graylog
+    ./influxdb
+    ./jackett
     ./nginx
     ./nzbget
     ./openssh
-    ./influxdb
+    ./overseerr
     ./plex
+    ./podman
     ./radarr
+    ./rsyslogd
+    ./sabre
     ./sonarr
     ./tailscale
     ./telegraf
-    ./sabre
-    ./zerotier
-    ./graylog
-    ./rsyslogd
-    ./overseerr
-    ./podman
-    ./fail2ban
-    ./wireguard
-    ./jackett
     ./transmission
-    ./deluge
+    ./wireguard
+    ./xteve
+    ./zerotier
   ];
 }

@@ -6,10 +6,12 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs.url = "github:serokell/deploy-rs";
-    sops-nix.url = github:Mic92/sops-nix;
+    sops-nix.url = "github:Mic92/sops-nix";
+    nixops.url = "github:nixos/nixops";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, deploy-rs, sops-nix }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, deploy-rs
+    , sops-nix, nixops }:
     let
       inherit (nixpkgs) lib;
 
@@ -37,8 +39,11 @@
         let
           # This is an attribute set common between all machines (basically a top-level NixOS configuration)
           defaults = { pkgs, lib, ... }: {
-            imports = [ ./machines/common.nix machineConfiguration sops-nix.nixosModules.sops ]
-              ++ extraModules;
+            imports = [
+              ./machines/common.nix
+              machineConfiguration
+              sops-nix.nixosModules.sops
+            ] ++ extraModules;
           };
           # This gets boiled down to a nixosSystem
         in inputs.nixpkgs.lib.nixosSystem {
@@ -105,5 +110,10 @@
         (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     } // (flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs-unstable.legacyPackages.${system};
-      in { devShell = import ./shell.nix { inherit pkgs; }; }));
+      in {
+        devShell = import ./shell.nix {
+          inherit pkgs;
+          inherit sops-nix;
+        };
+      }));
 }
