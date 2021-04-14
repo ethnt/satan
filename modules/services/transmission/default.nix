@@ -2,23 +2,21 @@
 with lib;
 let
   cfg = config.satan.services.transmission;
-  etc."transmission/settings.json" = {
-    source = ../../../machines/barbossa/etc/transmission.json;
-  };
+  # etc."transmission/settings.json" = {
+  #   source = ../../../machines/barbossa/etc/transmission.json;
+  # };
 in {
   options.satan.services.transmission = {
     enable = mkEnableOption "Enable Transmission";
 
-    authentication.username = mkOption {};
-    authentication.password = mkOption {};
+    settingsPath = mkOption { };
 
     nginx.enable = mkEnableOption "Enable Nginx";
     nginx.host = mkOption { type = types.str; };
   };
 
   config = mkIf cfg.enable {
-    networking.firewall.allowedTCPPorts = [ 51413 ];
-    networking.firewall.allowedUDPPorts = [ 51413 ];
+    environment.etc."transmission/settings.json" = { source = cfg.settingsPath; };
 
     virtualisation.oci-containers.containers.transmission = {
       autoStart = true;
@@ -28,12 +26,10 @@ in {
         "PUID" = "1001";
         "PGID" = "1001";
         "TZ" = "America/New_York";
-        "USERNAME" = cfg.authentication.username;
-        "PASSWORD" = cfg.authentication.password;
       };
 
       dependsOn = [ "wireguard" ];
-      ports = [ "9091/9091" ];
+      ports = [ "9091:9091" ];
 
       extraOptions = [ "--net=container:wireguard" ];
       volumes = [
@@ -41,7 +37,7 @@ in {
         "/mnt/omnibus/transmission/downloads:/downloads"
         "/mnt/omnibus/transmission/incomplete:/incomplete"
         "/mnt/omnibus/transmission/watch:/watch"
-        "${etc."transmission/settings.json".source}:/config/settings.json:ro"
+        "/etc/transmission/settings.json:/config/settings.json:ro"
       ];
     };
 

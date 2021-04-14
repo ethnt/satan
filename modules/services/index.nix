@@ -20,6 +20,7 @@
     ./tailscale
     ./telegraf
     ./transmission
+    ./wireguard-container
     ./wireguard
     ./xteve
     ./zerotier

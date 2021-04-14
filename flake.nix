@@ -5,13 +5,12 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-20.09-small";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     flake-utils.url = "github:numtide/flake-utils";
-    deploy-rs.url = "github:serokell/deploy-rs";
     sops-nix.url = "github:Mic92/sops-nix";
     nixops.url = "github:nixos/nixops";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, deploy-rs
-    , sops-nix, nixops }:
+  outputs =
+    inputs@{ self, nixpkgs, nixpkgs-unstable, flake-utils, sops-nix, nixops }:
     let
       inherit (nixpkgs) lib;
 
@@ -28,86 +27,50 @@
           config.allowUnfree = true;
         });
 
-      # A function to generate a standard configuration. Arguments are:
-      #   - platform: See a `platform` from above
-      #   - machine: The name of the machine
-      #   - machineConfiguration: Path to the configuration (optional, defaults to ./machines/${machine}/configuration.nix)
-      #   - extraModules: Extra modules to include (optional, defaults to empty list)
-      mkConfig = { platform, machine
-        , machineConfiguration ? ./machines + "/${machine}/configuration.nix"
-        , extraModules ? [ ] }:
-        let
-          # This is an attribute set common between all machines (basically a top-level NixOS configuration)
-          defaults = { pkgs, lib, ... }: {
-            imports = [
-              ./machines/common.nix
-              machineConfiguration
-              sops-nix.nixosModules.sops
-            ] ++ extraModules;
+      # Make a deployment.
+      mkDeployment = { host, platform, machineName, machineConfiguration ?
+          ./machines + "/${machineName}/configuration.nix", secrets ? { } }: {
+            deployment = {
+              targetHost = host;
+              keys = secrets;
+            };
+
+            nixpkgs.pkgs = nixpkgsFor.${platform};
+            nixpkgs.localSystem.system = platform;
+
+            imports = [ ./machines/common.nix machineConfiguration ];
           };
-          # This gets boiled down to a nixosSystem
-        in inputs.nixpkgs.lib.nixosSystem {
-          system = platform;
-          pkgs = nixpkgsFor.${platform};
-          specialArgs = { inherit inputs nixpkgs; };
-          modules = [ defaults ];
-        };
-
-      # A function to create a new deploy-rs node for each host. Arguments are:
-      #   - hostname: IP or domain to deploy to
-      #   - machine: The NixOS configuration for the machine
-      #   - platform: What platform the host is (x86_64-linux or aarch64-linux, usually)
-      #
-      # TODO: Combine this and mkConfig into one function?
-      mkNode = { hostname, machine, platform }: {
-        hostname = hostname;
-        profiles.system = {
-          sshUser = "root";
-          sshOpts = [ "-i" "./keys/satan" ];
-          path = deploy-rs.lib.${platform}.activate.nixos
-            self.nixosConfigurations.${machine};
-        };
-      };
     in {
-      nixosConfigurations = {
-        funnel = mkConfig {
-          platform = "x86_64-linux";
-          machine = "funnel";
+      nixopsConfigurations.default = {
+        inherit nixpkgs;
+
+        network = {
+          description = "satan";
+          enableRollback = true;
         };
 
-        # controller = mkConfig {
-        #   platform = "aarch64-linux";
-        #   machine = "controller";
-        # };
-
-        barbossa = mkConfig {
+        funnel = mkDeployment {
+          host = "161.35.142.17";
           platform = "x86_64-linux";
-          machine = "barbossa";
-        };
-      };
-
-      deploy.nodes = {
-        funnel = mkNode {
-          platform = "x86_64-linux";
-          hostname = "161.35.142.17";
-          machine = "funnel";
+          machineName = "funnel";
+          secrets = {
+            wg-private-key = {
+              keyFile = ./machines/funnel/secrets/wireguard/wg-private-key;
+            };
+          };
         };
 
-        # controller = mkNode {
-        #   platform = "aarch64-linux";
-        #   hostname = "192.168.1.57";
-        #   machine = "controller";
-        # };
-
-        barbossa = mkNode {
+        barbossa = mkDeployment {
+          host = "barbossa.dev";
           platform = "x86_64-linux";
-          hostname = "barbossa.dev";
-          machine = "barbossa";
+          machineName = "barbossa";
+          secrets = {
+            wg-private-key = {
+              keyFile = ./machines/barbossa/secrets/wireguard/wg-private-key;
+            };
+          };
         };
       };
-
-      checks = builtins.mapAttrs
-        (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     } // (flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs-unstable.legacyPackages.${system};
       in {

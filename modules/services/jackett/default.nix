@@ -18,11 +18,11 @@ in {
         LOG_LEVEL = "info";
         TZ = "America/New_York";
       };
+      dependsOn = [ "wireguard" ];
+      extraOptions = [ "--net=container:wireguard" ];
       ports = [ "9117:9117" ];
-      volumes = [
-        "/var/lib/jackett:/config"
-        "/mnt/omnibus/jackett:/downloads"
-      ];
+      volumes =
+        [ "/var/lib/jackett:/config" "/mnt/omnibus/jackett:/downloads" ];
     };
 
     services.nginx = mkIf cfg.nginx.enable {

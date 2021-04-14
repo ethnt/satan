@@ -10,8 +10,6 @@ in {
       type = types.str;
       description = "Where on your file system the files sync to";
     };
-    authentication.username = mkOption { };
-    authentication.password = mkOption { };
     nginx.enable = mkEnableOption "Enable Nginx";
     nginx.host = mkOption { type = types.str; };
   };
@@ -28,7 +26,9 @@ in {
         addSSL = true;
         enableACME = true;
 
-        locations."/" = { proxyPass = "http://localhost:9050"; };
+        locations."/" = {
+          proxyPass = "http://localhost:9050";
+        };
       };
     };
   };

@@ -18,6 +18,16 @@
 
   networking.firewall = { enable = true; };
 
+  users = {
+    groups = { keys = {}; };
+    users = {
+      keys = {
+        createHome = false;
+        group = "keys";
+      };
+    };
+  };
+
   satan = {
     programs = {
       fish.enable = true;
@@ -31,6 +41,7 @@
         enable = true;
         syslogServer = "10.241.9.173:5144";
       };
+      fail2ban = { enable = true; };
     };
   };
 

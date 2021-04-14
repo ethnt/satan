@@ -1,14 +1,6 @@
 { config, pkgs, lib, ... }: {
   imports = [ ./hardware-configuration.nix ];
 
-  sops.defaultSopsFile = ../../secrets.yaml;
-
-  # sops.secrets.services_sabre_username = { };
-  # sops.secrets.services_sabre_password = { };
-
-  # sops.secrets.services_transmission_username = { };
-  # sops.secrets.services_transmission_password = { };
-
   # Use the systemd-boot EFI boot loader.
   boot = {
     loader = {
@@ -52,6 +44,11 @@
   };
 
   satan.services = {
+    builder = {
+      enable = true;
+      systems = [ "aarch64-linux" ];
+    };
+
     nginx = {
       enable = true;
       contactEmail = "ethan.turkeltaub@hey.com";
@@ -144,13 +141,6 @@
 
     podman = { enable = true; };
 
-    builder = {
-      enable = true;
-      systems = [ "aarch64-linux" ];
-    };
-
-    fail2ban = { enable = true; };
-
     jackett = {
       enable = true;
       nginx.enable = true;
@@ -159,20 +149,31 @@
 
     transmission = {
       enable = true;
+      settingsPath = ./etc/transmission/settings.json;
       nginx = {
         enable = true;
         host = "transmission.barbossa.dev";
       };
     };
 
-    wireguard = { enable = true; };
+    wireguard = {
+      enable = false;
+      externalInterface = "eno1";
+      ip = "10.100.0.2/24";
+      privateKeyFile = config.deployment.keys.wg-private-key.path;
+      peers = [ {
+        publicKey = "K3yHsof9OU8+FjwnRfgZ7Aw8Wp1LR9L/fsaoQI9JCTE=";
+        allowedIPs = [ "10.100.0.1/24" ];
+        endpoint = "161.35.142.17:51820";
+        persistentKeepalive = 25;
+      }];
+    };
+
+    wireguard-container = { enable = true; };
 
     xteve = {
       enable = true;
-      nginx = {
-        enable = false;
-        host = "xteve.barbossa.dev";
-      };
+      envFile = ./etc/xteve/env;
     };
   };
 

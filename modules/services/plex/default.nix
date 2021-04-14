@@ -15,6 +15,18 @@ in {
     services.plex = {
       enable = true;
       openFirewall = true;
+      # package = pkgs.plexRaw.overrideAttrs (x:
+      #   let
+      #     version = "1.22.2.4282-a97b03fad";
+      #     sha1 = "a655f65e94b669b3e21342fdeee3aac5a2763c40";
+      #   in {
+      #     name = "plex-${version}";
+      #     src = pkgs.fetchurl {
+      #       url =
+      #         "https://downloads.plex.tv/plex-media-server-new/${version}/redhat/plexmediaserver-${version}.x86_64.rpm";
+      #       inherit sha1;
+      #     };
+      #   });
     };
 
     services.nginx = mkIf cfg.nginx.enable {

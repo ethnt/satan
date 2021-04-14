@@ -5,13 +5,17 @@ in {
   options.satan.services.xteve = {
     enable = mkEnableOption "Enable Xteve";
 
+    envFile = mkOption {
+      type = types.path;
+    };
+
     nginx.enable = mkEnableOption "Enable Nginx";
     nginx.host = mkOption { type = types.str; };
   };
 
   config = mkIf cfg.enable {
     environment.etc."xteve/.env" = {
-      source = ../../../machines/barbossa/etc/xteve-env;
+      source = cfg.envFile;
     };
 
     virtualisation.oci-containers.containers.xteve_lazystream = {
@@ -29,16 +33,5 @@ in {
     };
 
     networking.firewall.allowedTCPPorts = [ 34400 ];
-
-    services.nginx = mkIf cfg.nginx.enable {
-      virtualHosts."${cfg.nginx.host}" = {
-        http2 = true;
-
-        addSSL = true;
-        enableACME = true;
-
-        locations."/" = { proxyPass = "http://localhost:34400"; };
-      };
-    };
   };
 }

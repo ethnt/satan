@@ -10,8 +10,10 @@ mkShell {
     git-crypt
     gnupg
     nixfmt
+    nixopsUnstable
     sops
     ssh-to-pgp
+    terraform
     (pkgs.callPackage sops-nix { }).sops-pgp-hook
   ];
 }
