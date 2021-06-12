@@ -6,9 +6,14 @@ let cfg = config.satan.services.graylog;
 in {
   options.satan.services.graylog = {
     enable = mkEnableOption "Enable Graylog";
-
-    nginx.enable = mkEnableOption "Enable Nginx";
-    nginx.host = mkOption { type = types.str; };
+    nginx = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Enable Nginx";
+          host = mkOption { type = types.str; };
+        };
+      };
+    };
   };
 
   config = mkIf cfg.enable {

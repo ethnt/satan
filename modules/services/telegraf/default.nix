@@ -25,6 +25,7 @@ in {
       createHome = false;
       extraGroups = [ "wheel" ];
       group = "users";
+      isSystemUser = true;
     };
 
     # Open ports for SNMP

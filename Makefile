@@ -1,5 +1,5 @@
 deploy:
-	nixops deploy -d satan
+	nixops deploy -d satan -k
 
 info:
 	nixops info -d satan

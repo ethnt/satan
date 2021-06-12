@@ -24,6 +24,7 @@
       keys = {
         createHome = false;
         group = "keys";
+        isSystemUser = true;
       };
     };
   };

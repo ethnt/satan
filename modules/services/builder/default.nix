@@ -22,6 +22,7 @@ in {
       createHome = false;
       extraGroups = [ "wheel" ];
       group = "users";
+      isSystemUser = true;
     };
   };
 }

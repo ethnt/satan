@@ -1,7 +1,7 @@
 {
   imports = [
+    ./bazarr
     ./builder
-    ./deluge
     ./fail2ban
     ./grafana
     ./graylog
@@ -13,15 +13,15 @@
     ./overseerr
     ./plex
     ./podman
+    ./qbittorrent
     ./radarr
     ./rsyslogd
-    ./sabre
     ./sonarr
     ./tailscale
     ./telegraf
     ./transmission
-    ./wireguard-container
     ./wireguard
+    ./wireguard-container
     ./xteve
     ./zerotier
   ];

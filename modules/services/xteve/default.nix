@@ -9,8 +9,14 @@ in {
       type = types.path;
     };
 
-    nginx.enable = mkEnableOption "Enable Nginx";
-    nginx.host = mkOption { type = types.str; };
+    nginx = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Enable Nginx";
+          host = mkOption { type = types.str; };
+        };
+      };
+    };
   };
 
   config = mkIf cfg.enable {

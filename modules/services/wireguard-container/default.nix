@@ -9,7 +9,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    boot.extraModulePackages = with config.boot.kernelPackages; [ wireguard ];
+    # boot.extraModulePackages = [ config.boot.kernelPackages.wireguard ];
 
     environment.systemPackages = with pkgs; [ wireguard ];
 
@@ -24,7 +24,14 @@ in {
         "PGID" = "1001";
       };
 
-      ports = [ "9091:9091" "9117:9117" ];
+      ports = [
+        "9091:9091"
+        "9117:9117"
+        "6881:6881"
+        "6881:6881/udp"
+        "8080:8080"
+        "6767:6767"
+      ];
 
       extraOptions = [
         "--network=htpc"
@@ -35,7 +42,7 @@ in {
 
       volumes = [
         "/run/booted-system/kernel-modules/lib/modules:/lib/modules:ro"
-        "/root/wireguard.conf:/config/wg0.conf:ro"
+        "${config.deployment.keys.wireguard-wg0.path}:/config/wg0.conf:ro"
       ];
     };
   };

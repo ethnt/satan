@@ -2,10 +2,10 @@
 
 with lib;
 
-let cfg = config.satan.services.jackett;
+let cfg = config.satan.services.bazarr;
 in {
-  options.satan.services.jackett = {
-    enable = mkEnableOption "Enable Radarr";
+  options.satan.services.bazarr = {
+    enable = mkEnableOption "Enable bazarr";
 
     nginx = mkOption {
       type = types.submodule {
@@ -18,16 +18,20 @@ in {
   };
 
   config = mkIf cfg.enable {
-    virtualisation.oci-containers.containers.jackett = {
-      image = "ghcr.io/linuxserver/jackett";
+    virtualisation.oci-containers.containers.bazarr = {
+      image = "ghcr.io/linuxserver/bazarr";
       environment = {
         LOG_LEVEL = "info";
         TZ = "America/New_York";
       };
-      dependsOn = [ "wireguard" ];
       extraOptions = [ "--net=container:wireguard" ];
-      ports = [ "9117:9117" ];
-      volumes = [ "/var/lib/jackett:/config" "/mnt:/mnt" ];
+      dependsOn = [ "wireguard" ];
+      ports = [ "6767:6767" ];
+      volumes = [
+        "/var/lib/sonarr:/config"
+        "/mnt/omnibus/media/tv:/tv"
+        "/mnt/omnibus/media/movies:/movies"
+      ];
     };
 
     services.nginx = mkIf cfg.nginx.enable {
@@ -37,7 +41,7 @@ in {
         addSSL = true;
         enableACME = true;
 
-        locations."/" = { proxyPass = "http://localhost:9117"; };
+        locations."/" = { proxyPass = "http://localhost:6767"; };
       };
     };
   };
